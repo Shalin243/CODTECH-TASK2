@@ -1,0 +1,83 @@
+/* Vulnerability Scannning Tool*/
+
+import socket
+import requests
+
+def scan_open_ports(target,ports):
+    open_ports=[]
+    for port in ports:
+        sock=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        socket.setdefaulttimeout(1)
+        result=sock.connect_ex((target,port))
+        if result == 0:
+            open_ports.append(port)
+        sock.close()
+    return open_ports
+
+def check_http_headers(url):
+    headers=[]
+    try:
+        response = requests.get(url,timeout=5)
+        headers = response.headers
+    except requests.RequestException as e:
+        print(f"Error fetching HTTP headers:{e})")
+    return headers
+def check_outdated_software(headers):
+    outdated = []
+    server = headers.get('Server','')
+    if 'Apache' in server:
+        version = server.split('')[1]if len(server.split(''))> 1 else ''
+        if version and version < '2.4.51' :
+            outdated.append(f"Apache version  {version}is outdated.")
+    elif 'nginx' in server:
+        version=server.split('/')[1] if len(server.split('/')) > 1 else''
+        if version and version < '1.21.4':
+            outdated.append(f"nginx version {version} is outdated.")
+    return outdated
+
+def check_misconfigurations(headers):
+    issues = []
+    if 'X-Frame-Options'not in headers:
+       issues.append("X-Frame-Options header is missing.")
+    if 'X-Content-Type-Options'not in  headers:
+        issues.append("X-Content-Type-Options headeris missing.")
+    if'Content-Security-Policy' not in headers:
+        issues.append("Content-Security-Policy header is missing.")
+    if 'Strict-Transport-Security' not in headers:
+        issues.append("Strict-Transport-Security header is missing.") 
+    return issues
+
+def vulnerability_scan(target):
+    print(f"Scanning {target} for vulnerability... ")
+
+    #Scanning for open ports
+    ports=[80,443,22,21,25,3305]
+    open_ports = scan_open_ports(target,ports)
+    print(f"Open ports:",open_ports )
+
+    #checking HTTP headers and software versions
+    url=f"http://{target}"
+    headers = check_http_headers(url)
+    if headers:
+        print(f"HTTP headers:{headers}")
+        outdated_software = check_outdated_software(headers)
+        if outdated_software:
+            print("Outdated software detected:")
+            for issue in outdated_software:
+                print(f"-{issue}")
+        else:
+            print("No outdated software detected.")
+
+        misconfigurations = check_misconfigurations(headers)
+        if misconfigurations:
+            print("Potential misconfigurations detected:")
+            for issue in misconfigurations:
+                print(f"-{issue}")
+        else:
+            print("NO misconfigurations detected")    
+    else:
+        print("Could not retrived HTTP headers.")
+
+if __name__ == '__main__':
+    target = input("Enter the target (IP address or domain):")
+    vulnerability_scan(target)
