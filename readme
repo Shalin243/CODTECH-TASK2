@@ -1,12 +1,12 @@
-**Overview of the Project**
+Overview of the Project
 
-**Project:Vulnerability Scanning Tool**
+Project:Vulnerability Scanning Tool
 
-**Objective**
+Objective
 
 The objective of this project is to scan a network or website for common security vulnerabilities such as open ports, outdated software versions,and misconfigurations.
 
-**Key Activities**
+Key Activities
 
 1. Network Scanning: The tool scans the network for hosts, open ports, and services running on those ports.
 2. Port Scanning: The tool scans the identified open ports to identify the services running on those ports.
@@ -15,12 +15,12 @@ The objective of this project is to scan a network or website for common securit
 5. Vulnerability Classification: The tool classifies the detected vulnerabilities based on their severity.	
 6. Reporting: The tool generates a report detailing the scanned network, detected services, and identified vulnerabilities.
 
-**Technology Used**
+Technology Used
 
  Python: The primary program language used because of its easy syntax, fast execution, large community, Flexibility.
  Libraries:Requests,sockets.
 
-**Key Insights**
+Key Insights
 
 1. Security Posture: Determine the overall security posture of the network, including patch levels, configuration settings, and security controls.
 2. Threat Actor Identification: Identify potential threat actors that may be targeting the organization.
